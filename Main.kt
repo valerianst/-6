@@ -1,15 +1,23 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-fun sortNegativesBeforePositives(arr: IntArray): IntArray {
-    val negatives = arr.filter { it < 0 }
-    val positives = arr.filter { it >= 0 }
-    return (negatives + positives).toIntArray()
+fun frequencySort(arr: IntArray): IntArray {
+    // Счет частоты каждого элемента
+    val frequencyN = mutableMapOf<Int, Int>()
+    for (num in arr) {
+        frequencyN[num] = frequencyN.getOrDefault(num, 0) + 1
+    }
+
+    // Сортировка по частоте (убывание), а при равной частоте - по значению (возрастание)
+    return arr.sortedWith(compareByDescending<Int> { frequencyN[it] }
+        .thenBy { it })
+        .toIntArray()
 }
 
 fun main() {
-    val input = intArrayOf(4, -3, 2, -1, 0, -5)
-    val result = sortNegativesBeforePositives(input)
+    val input = intArrayOf(4, 5, 6, 5, 4, 3)
+    val result = frequencySort(input)
 
     println("Вход: ${input.joinToString()}")
     println("Выход: ${result.joinToString()}")
 }
+
