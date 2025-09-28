@@ -1,0 +1,15 @@
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+fun sortNegativesBeforePositives(arr: IntArray): IntArray {
+    val negatives = arr.filter { it < 0 }
+    val positives = arr.filter { it >= 0 }
+    return (negatives + positives).toIntArray()
+}
+
+fun main() {
+    val input = intArrayOf(4, -3, 2, -1, 0, -5)
+    val result = sortNegativesBeforePositives(input)
+
+    println("Вход: ${input.joinToString()}")
+    println("Выход: ${result.joinToString()}")
+}
