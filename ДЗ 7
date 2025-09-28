@@ -1,0 +1,133 @@
+
+// Enum класс для жанров
+enum class Genre {
+    FANTASY, DETECTIVE, SCIENCE, HISTORY
+}
+
+// Абстрактный класс LibraryItem
+abstract class LibraryItem(open val id: String)
+
+// Интерфейс Borrowable
+interface Borrowable {
+    fun borrow(user: String)
+}
+
+// Обычный класс Book
+class Book(
+    val title: String,
+    val author: String,
+    val year: Int,
+    val genre: Genre
+) : LibraryItem(generateId()), Borrowable {
+
+    companion object {
+        private var bookCount = 0
+        private fun generateId(): String = "BOOK_${++bookCount}"
+    }
+
+    private var borrowedBy: String? = null
+
+    override fun borrow(user: String) {
+        borrowedBy = user
+        println("Книга '$title' взята пользователем: $user")
+    }
+
+    fun returnBook() {
+        borrowedBy = null
+        println("Книга '$title' возвращена")
+    }
+
+    override fun toString(): String {
+        return "Book(title='$title', author='$author', year=$year, genre=$genre, id=$id, borrowedBy=$borrowedBy)"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Book) return false
+        return title == other.title && author == other.author
+    }
+
+    override fun hashCode(): Int {
+        var result = title.hashCode()
+        result = 31 * result + author.hashCode()
+        return result
+    }
+}
+
+// Data class аналог Book
+data class DataBook(
+    val title: String,
+    val author: String,
+    val year: Int,
+    val genre: Genre,
+    override val id: String = generateDataBookId()
+) : LibraryItem(id), Borrowable {
+
+    companion object {
+        private var dataBookCount = 0
+        private fun generateDataBookId(): String = "DATA_BOOK_${++dataBookCount}"
+    }
+
+    private var borrowedBy: String? = null
+
+    override fun borrow(user: String) {
+        borrowedBy = user
+        println("DataBook '$title' взята пользователем: $user")
+    }
+
+    fun returnBook() {
+        borrowedBy = null
+        println("DataBook '$title' возвращена")
+    }
+}
+
+// Функция для тестирования
+fun testBooks() {
+    println(" КЛАСС BOOK ")
+
+    val book1 = Book("Война и мир", "Лев Толстой", 1869, Genre.HISTORY)
+    val book2 = Book("Война и мир", "Лев Толстой", 1870, Genre.HISTORY)
+    val book3 = Book("Преступление и наказание", "Фёдор Достоевский", 1866, Genre.DETECTIVE)
+
+    println("book1: $book1")
+    println("book2: $book2")
+    println("book3: $book3")
+
+    println("\n  Сравнение equals ")
+    println("book1 == book2: ${book1 == book2}")
+    println("book1 == book3: ${book1 == book3}")
+
+    println("\n HashCode ")
+    println("book1.hashCode(): ${book1.hashCode()}")
+    println("book2.hashCode(): ${book2.hashCode()}")
+    println("book3.hashCode(): ${book3.hashCode()}")
+
+    println("\n  Borrowable интерфейс ")
+    book1.borrow("Иван Иванов")
+    println(book1)
+    book1.returnBook()
+    println(book1)
+
+    println("\n  DATA CLASS DATABOOK ")
+
+    val dataBook1 = DataBook("Война и мир", "Лев Толстой", 1869, Genre.HISTORY)
+    val dataBook2 = DataBook("Война и мир", "Лев Толстой", 1870, Genre.HISTORY)
+    val dataBook3 = DataBook("Война и мир", "Лев Толстой", 1869, Genre.HISTORY)
+
+    println("dataBook1: $dataBook1")
+    println("dataBook2: $dataBook2")
+    println("dataBook3: $dataBook3")
+
+    println("\n Сравнение equals (Data class) ")
+    println("dataBook1 == dataBook2: ${dataBook1 == dataBook2}") // false (разные year)
+    println("dataBook1 == dataBook3: ${dataBook1 == dataBook3}") // true (все поля одинаковые)
+
+    println("\n HashCode (Data class) ")
+    println("dataBook1.hashCode(): ${dataBook1.hashCode()}")
+    println("dataBook2.hashCode(): ${dataBook2.hashCode()}")
+    println("dataBook3.hashCode(): ${dataBook3.hashCode()}")
+}
+
+fun main() {
+    testBooks()
+}
